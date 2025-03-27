@@ -1,16 +1,45 @@
-# calendaze
+# Calendaze - Flutter Calendar App  
 
-A new Flutter project.
+📅 A clean calendar app with event scheduling, built with Flutter for an internship assessment.  
 
-## Getting Started
+## Features  
+✔️ Add/edit events with reminders  
+✔️ Recurring events (daily/weekly/monthly/yearly)  
+✔️ Dark mode support  
+✔️ Notifications  
 
-This project is a starting point for a Flutter application.
+## Why I Built This  
+This project demonstrates my Flutter skills in:  
+- **State management** (Provider)  
+- **Custom UI design**  
+- **Local notifications**  
+- **DateTime handling**  
 
-A few resources to get you started if this is your first Flutter project:
+## Screenshots  
+*(Add screenshots later if needed)*  
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+## How to Run  
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+### Clone the repo  
+```bash
+git clone https://github.com/your-username/calendaze.git
+
+
+### Install dependencies (Install deps)  
+
+flutter pub get
+
+
+### Run on your device
+
+flutter run
+
+## Dependencies  
+---  
+
+- `flutter_local_notifications`: For reminders  
+- `table_calendar`: Beautiful calendar UI  
+- `provider`: State management  
+
+
+Let me know if you need any tweaks! 🚀
