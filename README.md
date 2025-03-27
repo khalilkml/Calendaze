@@ -15,28 +15,24 @@ This project demonstrates my Flutter skills in:
 - **Local notifications**  
 - **DateTime handling**  
 
-## Screenshots  
-*(Add screenshots later if needed)*  
-
 ## How to Run  
 
 ### Clone the repo  
 ```bash
 git clone https://github.com/your-username/calendaze.git
-
+```
 
 ### Install dependencies (Install deps)  
-
+```bash
 flutter pub get
-
+```
 
 ### Run on your device
-
+```bash
 flutter run
+```
 
 ## Dependencies  
----  
-
 - `flutter_local_notifications`: For reminders  
 - `table_calendar`: Beautiful calendar UI  
 - `provider`: State management  
