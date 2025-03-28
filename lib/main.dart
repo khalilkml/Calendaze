@@ -10,31 +10,16 @@ import 'package:timezone/data/latest.dart' as tz;
 import 'dart:io' show Platform;
 import 'package:intl/intl.dart';
 
-// void main() async {
-//   WidgetsFlutterBinding.ensureInitialized();
-//    tz.initializeTimeZones();
-  
-//   // Add these lines
-//   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-//       FlutterLocalNotificationsPlugin();
-//   await flutterLocalNotificationsPlugin
-//       .resolvePlatformSpecificImplementation<IOSFlutterLocalNotificationsPlugin>()
-//       ?.requestPermissions(
-//         alert: true,
-//         badge: true,
-//         sound: true,
-//       );
-  
-//   await NotificationService.initialize();
-//   runApp(MyApp());
-// }
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   tz.initializeTimeZones();
   await NotificationService.initialize();
 
-  // TEST: Show notification INSTANTLY (no scheduling)
+   // Clear previous notifications
+  await NotificationService.clearAllNotifications();
+
+  // Welcome notification
   await FlutterLocalNotificationsPlugin().show(
     0, // Notification ID
     'Colondaze', // Notification title

@@ -12,7 +12,9 @@ class EventProvider with ChangeNotifier {
 
   void addEvent(Event event) {
     _events.add(event);
+    print('Adding event: ${event.title} at ${event.notificationDateTime}');
     if (event.hasNotification) {
+      print('Scheduling notification for event');
       NotificationService.scheduleEventNotification(event);
     }
     notifyListeners();
@@ -21,14 +23,15 @@ class EventProvider with ChangeNotifier {
   void updateEvent(Event oldEvent, Event newEvent) {
     final index = _events.indexOf(oldEvent);
     _events[index] = newEvent;
+    print('Updating event: ${newEvent.title} at ${newEvent.notificationDateTime}');
     
-    // Cancel old notification if it existed
     if (oldEvent.hasNotification) {
+      print('Canceling old notification');
       NotificationService.cancelNotification(oldEvent);
     }
     
-    // Schedule new notification if needed
     if (newEvent.hasNotification) {
+      print('Scheduling new notification');
       NotificationService.scheduleEventNotification(newEvent);
     }
     

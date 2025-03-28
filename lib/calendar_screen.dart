@@ -32,7 +32,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Calendar App'),
+        title: const Text('Calendaze'),
         actions: [
           IconButton(
             icon: const Icon(Icons.add),

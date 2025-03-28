@@ -31,67 +31,102 @@ class NotificationService {
 
   static Future<void> _createNotificationChannel() async {
     const androidChannel = AndroidNotificationChannel(
-      'event_channel', // Must match channel ID in scheduleEventNotification
-      'Event Reminders', // Channel name
-      description: 'Notifications for upcoming events', // Channel description
+      'event_channel',
+      'Event Reminders',
+      description: 'Notifications for upcoming events',
       importance: Importance.max,
       playSound: true,
       enableVibration: true,
       ledColor: Colors.blue,
       enableLights: true,
+      showBadge: true,
     );
     
     try {
       await _notifications
             .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
             ?.createNotificationChannel(androidChannel);
-        print('✅ Notification channel created successfully');
+      print('✅ Notification channel created successfully: $androidChannel');
     } catch (e) {
       print('❌ Failed to create channel: $e');
+      // Try showing a regular notification to verify basic functionality
+      await _notifications.show(
+        9999,
+        'Channel Creation Failed',
+        'Could not create notification channel: $e',
+        NotificationDetails(
+          android: AndroidNotificationDetails(
+            'fallback_channel',
+            'Fallback Channel',
+            importance: Importance.high,
+          ),
+        ),
+      );
     }
   }
 
   static Future<void> scheduleEventNotification(Event event) async {
-    final tzDateTime = tz.TZDateTime.from(
-      event.notificationDateTime.toLocal(),
-      tz.local,
-    );
+  // Define AndroidNotificationDetails
+  const androidDetails = AndroidNotificationDetails(
+    'event_channel', // Channel ID must match the created channel
+    'Event Reminders',
+    channelDescription: 'Notifications for upcoming events',
+    importance: Importance.max,
+    priority: Priority.high,
+    playSound: true,
+  );
 
-    if (tzDateTime.isBefore(DateTime.now().add(Duration(seconds: 10)))) {
-      final adjustedTime = DateTime.now().add(Duration(seconds: 10));
-      event.date = adjustedTime;
-      event.time = TimeOfDay.fromDateTime(adjustedTime);
-    }
-
-    final androidDetails = AndroidNotificationDetails(
-      'event_channel',
-      'Event Reminders',
-      importance: Importance.max,
-      priority: Priority.high,
-      playSound: true,
-    );
-
-    try {
-      await _notifications.zonedSchedule(
-        event.id.hashCode,
-        event.title,
-        event.description,
-        tzDateTime,
-        NotificationDetails(android: androidDetails),
-        androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-        matchDateTimeComponents: event.isRecurring 
-            ? _getRecurrenceComponents(event) 
-            : null,
-      );
-    } catch (e) {
-      await _notifications.show(
-        event.id.hashCode + 1,
-        event.title,
-        'Scheduled notification failed: ${event.description}',
-        NotificationDetails(android: androidDetails),
-      );
-    }
+  // Verify notification permission
+  final status = await Permission.notification.status;
+  if (!status.isGranted) {
+    await Permission.notification.request();
   }
+
+  // Convert to local timezone
+  final localDateTime = event.notificationDateTime.toLocal();
+  final tzDateTime = tz.TZDateTime.from(localDateTime, tz.local);
+
+  // Debug print
+  print('Scheduling notification for: $tzDateTime | Now: ${tz.TZDateTime.now(tz.local)}');
+
+  // Only adjust time if it's in the past (with some buffer)
+  if (tzDateTime.isBefore(tz.TZDateTime.now(tz.local).add(Duration(minutes: 1)))) {
+    print('Adjusting notification time to future');
+    final adjustedTime = tz.TZDateTime.now(tz.local).add(Duration(minutes: 1));
+    await _notifications.zonedSchedule(
+      event.id.hashCode,
+      'Adjusted: ${event.title}',
+      'Original time was in past: ${event.description}',
+      adjustedTime,
+      NotificationDetails(android: androidDetails),
+      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+    );
+    return;
+  }
+
+  try {
+    await _notifications.zonedSchedule(
+      event.id.hashCode,
+      event.title,
+      event.description,
+      tzDateTime,
+      NotificationDetails(android: androidDetails),
+      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+      matchDateTimeComponents: event.isRecurring 
+          ? _getRecurrenceComponents(event) 
+          : null,
+    );
+    print('✅ Notification scheduled successfully for ${event.title} at $tzDateTime');
+  } catch (e) {
+    print('❌ Error scheduling notification: $e');
+    await _notifications.show(
+      event.id.hashCode + 1,
+      'Failed to schedule: ${event.title}',
+      'Error: $e\nEvent: ${event.description}',
+      NotificationDetails(android: androidDetails),
+    );
+  }
+}
 
   static tz.TZDateTime _convertToTz(DateTime dateTime) {
     return tz.TZDateTime.from(dateTime, tz.local);
