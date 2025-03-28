@@ -13,7 +13,7 @@ class EventProvider with ChangeNotifier {
   void addEvent(Event event) {
     _events.add(event);
     if (event.hasNotification) {
-      NotificationService().scheduleNotification(event);
+      NotificationService.scheduleEventNotification(event);
     }
     notifyListeners();
   }
@@ -21,14 +21,28 @@ class EventProvider with ChangeNotifier {
   void updateEvent(Event oldEvent, Event newEvent) {
     final index = _events.indexOf(oldEvent);
     _events[index] = newEvent;
-    if (newEvent.hasNotification) {
-      NotificationService().scheduleNotification(newEvent);
+    
+    // Cancel old notification if it existed
+    if (oldEvent.hasNotification) {
+      NotificationService.cancelNotification(oldEvent);
     }
+    
+    // Schedule new notification if needed
+    if (newEvent.hasNotification) {
+      NotificationService.scheduleEventNotification(newEvent);
+    }
+    
     notifyListeners();
   }
 
   void deleteEvent(Event event) {
     _events.remove(event);
+    
+    // Cancel notification if it existed
+    if (event.hasNotification) {
+      NotificationService.cancelNotification(event);
+    }
+    
     notifyListeners();
   }
 

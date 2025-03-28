@@ -1,12 +1,55 @@
 import 'package:flutter/material.dart';
 import 'splash_screen.dart';
 import 'event_provider.dart';
+import 'event_model.dart';
 import 'notification_service.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:timezone/data/latest.dart' as tz;
+import 'dart:io' show Platform;
+import 'package:intl/intl.dart';
+
+// void main() async {
+//   WidgetsFlutterBinding.ensureInitialized();
+//    tz.initializeTimeZones();
+  
+//   // Add these lines
+//   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+//       FlutterLocalNotificationsPlugin();
+//   await flutterLocalNotificationsPlugin
+//       .resolvePlatformSpecificImplementation<IOSFlutterLocalNotificationsPlugin>()
+//       ?.requestPermissions(
+//         alert: true,
+//         badge: true,
+//         sound: true,
+//       );
+  
+//   await NotificationService.initialize();
+//   runApp(MyApp());
+// }
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await NotificationService().initialize();
+  tz.initializeTimeZones();
+  await NotificationService.initialize();
+
+  // TEST: Show notification INSTANTLY (no scheduling)
+  await FlutterLocalNotificationsPlugin().show(
+    0, // Notification ID
+    'Colondaze', // Notification title
+    'Welcome to you Calendare app',
+    const NotificationDetails(
+      android: AndroidNotificationDetails(
+        'event_channel', // Must match your channel ID
+        'Event Reminders',
+        importance: Importance.max,
+        priority: Priority.high,
+        playSound: true,
+      ),
+    ),
+  );
+
   runApp(MyApp());
 }
 

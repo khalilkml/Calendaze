@@ -5,7 +5,7 @@ publish_to: 'none'
 version: 1.0.0+1
 
 environment:
-  sdk: '>=3.7.0 <4.0.0'  # More precise SDK constraint
+  sdk: '>=3.7.0 <4.0.0'
 
 dependencies:
   flutter:
@@ -13,10 +13,11 @@ dependencies:
   cupertino_icons: ^1.0.8
   table_calendar: ^3.2.0
   flutter_local_notifications: ^19.0.0
-  provider: ^6.0.5
-  intl: ^0.20.2
-  shared_preferences: ^2.2.0
+  provider: ^6.1.1
+  intl: ^0.20.1
+  shared_preferences: ^2.2.1
   timezone: ^0.10.0
+  permission_handler: ^11.4.0
 
 dev_dependencies:
   flutter_test:

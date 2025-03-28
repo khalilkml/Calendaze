@@ -32,6 +32,6 @@ class Event {
       date.day,
       time.hour,
       time.minute,
-    );
+    ).toUtc();
   }
 }
